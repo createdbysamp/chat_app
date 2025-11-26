@@ -80,10 +80,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       const data = await response.json();
-      const { token: authToken, username } = data;
+      const { token: authToken, username: returnedUsername } = data;
 
-      // Create user object from username
-      const userData = { username };
+      // Create user object with required fields
+      const userData: User = {
+        id: returnedUsername, // Use username as ID since backend doesn't provide separate ID
+        username: returnedUsername,
+        email: email, // Use the email from login form
+      };
 
       // Store token and user data
       localStorage.setItem("authToken", authToken);
@@ -129,10 +133,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       const data = await response.json();
-      const { token: authToken, username } = data;
+      const { token: authToken, username: returnedUsername } = data;
 
-      // Create user object from username
-      const userData = { username };
+      // Create user object with required fields
+      const userData: User = {
+        id: returnedUsername, // Use username as ID since backend doesn't provide separate ID
+        username: returnedUsername,
+        email: email, // Use the email from registration form
+      };
 
       // Store token and user data
       localStorage.setItem("authToken", authToken);
