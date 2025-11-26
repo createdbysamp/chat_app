@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
-import type { Message as MessageType, MessageReceivedEvent } from "../types";
+import type { Message as MessageType } from "../types";
 import { MessageList } from "./MessageList";
 import { MessageInput } from "./MessageInput";
 import { socketService, ConnectionStatus } from "../services/socketService";
