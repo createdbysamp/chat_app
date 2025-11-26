@@ -8,17 +8,18 @@ import type {
 } from "../types";
 
 /**
- * Socket event names
+ * Socket event names - must match backend
  */
 export const SOCKET_EVENTS = {
   // Message events
-  MESSAGE_SEND: "message:send",
-  MESSAGE_RECEIVED: "message:received",
+  MESSAGE_SEND: "send_message",
+  MESSAGE_RECEIVED: "new_message",
+  MESSAGE_HISTORY: "message_history",
 
   // User presence events
   USER_JOINED: "user:joined",
   USER_LEFT: "user:left",
-  ONLINE_USERS: "online:users",
+  ONLINE_USERS: "online_users",
 
   // Typing indicator events (optional)
   TYPING_START: "typing:start",
@@ -34,7 +35,7 @@ export const messageEvents = {
    * Send a message to the server
    */
   sendMessage(content: string): void {
-    socketService.emit(SOCKET_EVENTS.MESSAGE_SEND, { content });
+    socketService.emit(SOCKET_EVENTS.MESSAGE_SEND, { text: content });
   },
 
   /**

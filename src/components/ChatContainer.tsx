@@ -17,20 +17,18 @@ export const ChatContainer: React.FC = () => {
   const previousStatusRef = useRef<string>(ConnectionStatus.DISCONNECTED);
 
   // Handle incoming messages
-  const handleMessageReceived = useCallback(
-    (messageEvent: MessageReceivedEvent) => {
-      const newMessage: MessageType = {
-        id: messageEvent.id,
-        senderId: messageEvent.senderId,
-        senderUsername: messageEvent.senderUsername,
-        content: messageEvent.content,
-        timestamp: new Date(messageEvent.timestamp),
-      };
+  const handleMessageReceived = useCallback((messageEvent: any) => {
+    // Backend sends: { id, username, text, timestamp }
+    const newMessage: MessageType = {
+      id: messageEvent.id,
+      senderId: messageEvent.username, // Use username as senderId
+      senderUsername: messageEvent.username,
+      content: messageEvent.text,
+      timestamp: new Date(messageEvent.timestamp),
+    };
 
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
-    },
-    []
-  );
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
+  }, []);
 
   // Handle connection status changes
   const handleStatusChange = useCallback(
@@ -81,7 +79,20 @@ export const ChatContainer: React.FC = () => {
     // Initialize WebSocket connection
     socketService.connect(SOCKET_URL, token || undefined);
 
+    // Handle message history
+    const handleMessageHistory = (history: any[]) => {
+      const formattedMessages = history.map((msg: any) => ({
+        id: msg.id,
+        senderId: msg.username,
+        senderUsername: msg.username,
+        content: msg.text,
+        timestamp: new Date(msg.timestamp),
+      }));
+      setMessages(formattedMessages);
+    };
+
     // Register event listeners
+    socketService.on("message_history", handleMessageHistory);
     messageEvents.onMessageReceived(handleMessageReceived);
     socketService.onStatusChange(handleStatusChange);
 
@@ -90,6 +101,7 @@ export const ChatContainer: React.FC = () => {
 
     // Cleanup on unmount
     return () => {
+      socketService.off("message_history", handleMessageHistory);
       messageEvents.offMessageReceived(handleMessageReceived);
       socketService.offStatusChange(handleStatusChange);
       socketService.disconnect();
