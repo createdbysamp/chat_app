@@ -7,7 +7,7 @@ import { messageEvents } from "../services/socketEvents";
 import { useAuth } from "../contexts/AuthContext";
 import { useToast } from "../contexts/ToastContext";
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:3001";
+const SOCKET_URL = import.meta.env.VITE_WEBSOCKET_URL || "ws://localhost:3001";
 
 export const ChatContainer: React.FC = () => {
   const { token } = useAuth();
