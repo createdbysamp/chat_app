@@ -54,17 +54,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const login = async (email: string, password: string): Promise<void> => {
-    // TODO: Replace with actual API call to backend authentication service
-    // For now, this is a mock implementation
     setIsAuthenticating(true);
     try {
-      // Simulate API call
-      const response = await fetch("/api/auth/login", {
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
+      const response = await fetch(`${apiUrl}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ username: email, password }),
       });
 
       if (!response.ok) {
@@ -72,8 +70,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           "Authentication failed. Please check your credentials.";
         try {
           const errorData = await response.json();
-          if (errorData.message) {
-            errorMessage = errorData.message;
+          if (errorData.error) {
+            errorMessage = errorData.error;
           }
         } catch {
           // If response.json() fails, use default error message
@@ -82,7 +80,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       const data = await response.json();
-      const { token: authToken, user: userData } = data;
+      const { token: authToken, username } = data;
+
+      // Create user object from username
+      const userData = { username };
 
       // Store token and user data
       localStorage.setItem("authToken", authToken);
@@ -103,25 +104,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     email: string,
     password: string
   ): Promise<void> => {
-    // TODO: Replace with actual API call to backend authentication service
-    // For now, this is a mock implementation
     setIsAuthenticating(true);
     try {
-      // Simulate API call
-      const response = await fetch("/api/auth/register", {
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
+      const response = await fetch(`${apiUrl}/api/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username, email, password }),
+        body: JSON.stringify({ username, password }),
       });
 
       if (!response.ok) {
         let errorMessage = "Registration failed. Please try again.";
         try {
           const errorData = await response.json();
-          if (errorData.message) {
-            errorMessage = errorData.message;
+          if (errorData.error) {
+            errorMessage = errorData.error;
           }
         } catch {
           // If response.json() fails, use default error message
@@ -130,7 +129,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       const data = await response.json();
-      const { token: authToken, user: userData } = data;
+      const { token: authToken, username } = data;
+
+      // Create user object from username
+      const userData = { username };
 
       // Store token and user data
       localStorage.setItem("authToken", authToken);
