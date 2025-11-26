@@ -80,7 +80,11 @@ export const ChatContainer: React.FC = () => {
     socketService.connect(SOCKET_URL, token || undefined);
 
     // Handle message history
-    const handleMessageHistory = (history: any[]) => {
+    const handleMessageHistory = (history: any) => {
+      if (!history || !Array.isArray(history)) {
+        console.warn("Invalid message history received:", history);
+        return;
+      }
       const formattedMessages = history.map((msg: any) => ({
         id: msg.id,
         senderId: msg.username,
